@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="banner">
+        <img src="/logo/logo.png" alt="logo">
+    </div>
+
+    <h1>Hatsaa Gelukt!</h1>
+
+    <div class="container">
+
+        <img id="product-image" src="shocked-tony-hawk.gif" alt="shocked tony hawk" class="product-image">
+            
+        <h2>Harterlijk dank voor je bestelling bij KickFlipKings</h2>
+
+        <button class="back-button" id="back-button">Verder winkelen!</button>
+    </div>
+
+
+
+</body>
+<script>
+    const backButton = document.getElementById('back-button');
+
+    backButton.addEventListener('click', () => {
+        window.location.href = '/';
+    });
+</script>
+<style>
+    * {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+        margin: 0;
+        padding: 0;
+        text-align: center;
+        color: #353531;
+    }
+
+    .banner {
+        width: 100%;
+        height: 100px;
+        background-color: #ec4e20;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .banner img {
+        height: 100px;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0 15px;
+        text-align: center;
+    }
+
+    .product-image {
+        width: 250px;
+        height: 250px;
+    }
+
+    .back-button {
+        width: 100%;
+        height: 50px;
+        border-radius: 10px;
+        border: none;
+        background-color: #ec4e20;
+        color: white;
+        font-size: 20px;
+        margin: 25px;
+        max-width: 250px;
+    }
+</style>
+</html>

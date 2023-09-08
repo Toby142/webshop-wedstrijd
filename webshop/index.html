@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webshop</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="banner">
+        <img src="/logo/logo.png" alt="logo">
+    </div>
+
+    <h1>Stel je eigen product samen!</h1>
+
+    <div class="container">
+        <div class="box">
+
+            <h2>product naam</h2>
+            
+            <div class="select-buttons">
+                <button id="selectPrevious"><</button>
+                <div class="product-select">
+                    <img id="product-image" src="" alt="" class="product-image">
+                    <img src="" alt="" class="product-symbol">
+                </div>
+                <button id="selectNext">></button>
+            </div>
+
+            <div class="steps">
+                <div id="step1" class="step">soort</div>
+                <div id="step2Line" class="step-line"></div>
+                <div id="step2" class="step">kleur</div>
+                <div id="step3Line" class="step-line"></div>
+                <div id="step3" class="step">symbool</div>
+            </div>
+
+            <div class="step-buttons">
+                <button id="stepPrivious">vorige</button>
+                <button id="stepNext">volgende</button>
+            </div>
+
+
+            <div class="total">
+                <h4 id="totalName"></h4>
+                <h4 id="totalPrice"></h4>
+            </div>
+
+            <button class="orderButton" id="addToCart">Hatsa Bestellen!</button>
+
+        </div>
+    </div>
+    
+
+</body>
+
+<script>
+
+    // oew lijstjes veur producten, kleure en symbolen om in te vullen
+    let products = [];
+    let colors = [];
+    let symbols = [];
+
+    // welk product, kleur en symbool op 't moment aktief is'
+    let activeProduct = 0;
+    let activeColour = 0;
+    let activeSymbol = 0;
+
+    //  welke stap in 't proces ge bent
+    let activeStep = 0;
+
+    //  hier halen we data op uit 'n JSON-bestand
+    fetch('dataset.json')
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        products = data.products;
+        colours = data.colours;
+        symbols = data.symbols;
+        renderProduct(); // toont 't aktieve product
+        renderStep(); // toont welke stap je bent
+    });
+
+    // luistert naor de "volgende stap" knop
+    document.getElementById('stepNext').addEventListener('click', () => {
+        if (activeStep < 2) {
+            activeStep++;
+            console.log(activeStep);
+            renderStep(); // toont welke stap ge bent
+        }
+    });
+
+    // luistert naor de "vorige stap" knop
+    document.getElementById('stepPrivious').addEventListener('click', () => {
+        if (activeStep > 0) {
+            activeStep--;
+            console.log(activeStep);
+            renderStep(); // toont welke stap ge bent
+        }
+    });
+
+    // Luistert naor de "Vorige" knop bij 't kiezen van product, kleur of symbol
+    document.getElementById('selectPrevious').addEventListener('click', () => {
+        custumizeProductPrevious(); // Gaat naor 't vorige product, kleur of symbol
+        renderProduct(); // Toont 't aktieve product
+    });
+    
+    // Luistert naor de "Volgende" knop bij 't kiezen van product, kleur of symbol
+    document.getElementById('selectNext').addEventListener('click', () => {
+        custumizeProductNext(); // Gaat naor 't volgende product, kleur of symbol
+        renderProduct(); // Toont 't aktieve product
+    });
+
+    // Hier bepaolen we welk product, kleur en symbol er wordt getoond
+    function custumizeProductNext() {
+        if (activeStep == 0) {
+            if (activeProduct < products.length - 1) {
+                activeProduct++;
+            } else {
+                activeProduct = 0;
+            }
+        }
+        if (activeStep == 1) {
+            if (activeColour < colours.length - 1) {
+                activeColour++;
+            } else {
+                activeColour = 0;
+            }
+        }
+        if (activeStep == 2) {
+            if (activeSymbol < symbols.length - 1) {
+                activeSymbol++;
+            } else {
+                activeSymbol = 0;
+            }
+        }
+    }
+
+    // Hier gaon we trug naor 't vorige product, kleur of symbol
+    function custumizeProductPrevious() {
+        if (activeStep == 0) {
+            if (activeProduct > 0) {
+                activeProduct--;
+            } else {
+                activeProduct = products.length - 1;
+            }
+        }
+        if (activeStep == 1) {
+            if (activeColour > 0) {
+                activeColour--;
+            } else {
+                activeColour = colours.length - 1;
+            }
+        }
+        if (activeStep == 2) {
+            if (activeSymbol > 0) {
+                activeSymbol--;
+            } else {
+                activeSymbol = symbols.length - 1;
+            }
+        }
+    }
+
+    // Hier tonen we 't aktieve product, kleur en symbol
+    function renderProduct() {
+        document.querySelector('h2').innerHTML = products[activeProduct].name;
+        document.getElementById('product-image').src = `products/${products[activeProduct].name}-${colours[activeColour].name}.png`;
+        document.querySelector('.product-symbol').src = `symbols/symbol-${symbols[activeSymbol].name}.png`;
+        calcPrice(); // berekent de prijs
+    }
+
+    // string litirals
+
+    // moakt 't aktieve stap rood
+    function renderStep() {
+        if (activeStep === 0) {
+            document.getElementById('step1').style.color = '#ec4e20';
+            document.getElementById('step2').style.color = '#939393';
+            document.getElementById('step3').style.color = '#939393';
+            document.getElementById('step2Line').style.backgroundColor = '#939393';
+            document.getElementById('step3Line').style.backgroundColor = '#939393';
+        }
+        if (activeStep === 1) {
+            document.getElementById('step1').style.color = '#ec4e20';
+            document.getElementById('step2').style.color = '#ec4e20';
+            document.getElementById('step3').style.color = '#939393';
+            document.getElementById('step2Line').style.backgroundColor = '#ec4e20';
+            document.getElementById('step3Line').style.backgroundColor = '#939393';
+        }
+        if (activeStep === 2) {
+            document.getElementById('step1').style.color = '#ec4e20';
+            document.getElementById('step2').style.color = '#ec4e20';
+            document.getElementById('step3').style.color = '#ec4e20';
+            document.getElementById('step2Line').style.backgroundColor = '#ec4e20';
+            document.getElementById('step3Line').style.backgroundColor = '#ec4e20';
+        }
+        checkSteps(); // kijkt of de knoppen uit moeten
+    }
+
+    // Hier berekenen we de prijs van 't produkt
+    function calcPrice() {
+        let price = 0;
+        price += products[activeProduct].price;
+        price += colours[activeColour].price_add;
+        document.getElementById('totalName').innerHTML = `${products[activeProduct].name} ${colours[activeColour].name} ${symbols[activeSymbol].name}`;
+        document.getElementById('totalPrice').innerHTML = `€${price}`;
+    }
+
+    // Luistert naor de "Toevoegen aon Kar" knop
+    document.getElementById('addToCart').addEventListener('click', () => {
+        order(); // plaots 'n bestelling'
+    });
+
+    // hier moaken we 'n bestelling
+    function order() {
+        const url = 'https://skills.canvasaccept.com/orders';
+
+        fetch(url, {
+            method: 'POST',
+            body: JSON.stringify({
+                productType: products[activeProduct].id,
+                colour: colours[activeColour].id,
+                symbol: symbols[activeSymbol].id,
+                school: 'ROC Tilburg, kasteeldreef'
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        // if the response is true go to the order-confirmed page
+        .then(response => {
+            if (response.ok) {
+                window.location.href = 'order-confirmed.html';
+            }
+        })
+    }
+
+    function checkSteps() {
+        if (activeStep === 0) {
+            document.getElementById('stepPrivious').disabled = true;
+        } else {
+            document.getElementById('stepPrivious').disabled = false;
+        }
+        if (activeStep === 2) {
+            document.getElementById('stepNext').disabled = true;
+        } else {
+            document.getElementById('stepNext').disabled = false;
+        }
+    }
+
+</script>
+<style>
+
+/* colors: #ec4e20 en #353531 */
+    * {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+        margin: 0;
+        padding: 0;
+        text-align: center;
+        color: #353531;
+    }
+
+    .banner {
+        width: 100%;
+        height: 100px;
+        background-color: #ec4e20;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .banner img {
+        height: 100px;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        text-align: center;
+    }
+
+    .product-select {
+        position: relative;
+    }
+
+    .product-image {
+        width: 250px;
+        height: 250px;
+    }
+
+    .product-symbol {
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        top: 40%;
+        left: 45%;
+        opacity: 0.9;
+    }
+
+    .steps {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .step-line {
+        width: 100px;
+        height: 3px;
+        background-color: #939393;
+        margin-top: 10px;
+    }
+
+    .step {
+        font-weight: bold;
+        margin: 0 5px ;
+        color: #939393;
+    }
+
+    .step-buttons {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .step-buttons :disabled {
+        cursor: not-allowed;
+        background-color: #939393;
+    }
+
+    .step-buttons button {
+        width: 100px;
+        height: 30px;
+        border-radius: 10px;
+        border: none;
+        background-color: #353531;
+        color: white;
+        font-size: 15px;
+        margin-top: 25px;
+    }
+
+    .select-buttons {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .select-buttons button {
+        margin: 0 10px;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        border: none;
+        background-color: #ec4e20;
+        color: white;
+        font-size: 15px;
+        font-weight: bold;
+    }
+    .select-buttons button:hover {
+        cursor: pointer;
+    }
+    .select-buttons button:active {
+        background-color: #b6411d;
+    }
+
+    .orderButton {
+        width: 100%;
+        height: 50px;
+        border-radius: 10px;
+        border: none;
+        background-color: #ec4e20;
+        color: white;
+        font-size: 20px;
+    }
+    
+    .total {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+</style>
+
+</html>
